@@ -1,0 +1,279 @@
+# PIPELINE DEFINITION
+# Name: untitled
+components:
+  comp-run-a-file:
+    executorLabel: exec-run-a-file
+  comp-run-a-file-2:
+    executorLabel: exec-run-a-file-2
+  comp-run-a-file-3:
+    executorLabel: exec-run-a-file-3
+  comp-run-a-file-4:
+    executorLabel: exec-run-a-file-4
+deploymentSpec:
+  executors:
+    exec-run-a-file:
+      container:
+        args:
+        - 'sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/bootstrapper.py'' ]] && (echo ''bootstrapper.py
+          file already exists''; cp ''/opt/app-root/bin/utils/bootstrapper.py'' .)
+          || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py''
+          --output bootstrapper.py)"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/requirements-elyra.txt'' ]] && (echo
+          ''requirements-elyra.txt file already exists''; cp ''/opt/app-root/bin/utils/requirements-elyra.txt''
+          .) || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt''
+          --output requirements-elyra.txt)"
+
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt
+          && python3 bootstrapper.py --pipeline-name ''untitled'' --cos-endpoint ''https://minio-api-ml.apps.privateailab.acic.accenture''
+          --cos-bucket ''mlpipeline-artifacts'' --cos-directory ''untitled-1118102039''
+          --cos-dependencies-archive ''data_processing-f13270d9-8b63-4487-b0e8-2fb458ecb38b.tar.gz''
+          --file ''pipeline-skeleton/data_processing.ipynb'' "
+
+          '
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: 'True'
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:2932e07edbcbc54e68959cc6bc5c16c6b07766453a3ac655bdc33b844108c541
+    exec-run-a-file-2:
+      container:
+        args:
+        - 'sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/bootstrapper.py'' ]] && (echo ''bootstrapper.py
+          file already exists''; cp ''/opt/app-root/bin/utils/bootstrapper.py'' .)
+          || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py''
+          --output bootstrapper.py)"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/requirements-elyra.txt'' ]] && (echo
+          ''requirements-elyra.txt file already exists''; cp ''/opt/app-root/bin/utils/requirements-elyra.txt''
+          .) || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt''
+          --output requirements-elyra.txt)"
+
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt
+          && python3 bootstrapper.py --pipeline-name ''untitled'' --cos-endpoint ''https://minio-api-ml.apps.privateailab.acic.accenture''
+          --cos-bucket ''mlpipeline-artifacts'' --cos-directory ''untitled-1118102039''
+          --cos-dependencies-archive ''model_development-017b191c-adef-48ff-a373-ed50ee71d5fa.tar.gz''
+          --file ''pipeline-skeleton/model_development.ipynb'' "
+
+          '
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: 'True'
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:2932e07edbcbc54e68959cc6bc5c16c6b07766453a3ac655bdc33b844108c541
+    exec-run-a-file-3:
+      container:
+        args:
+        - 'sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/bootstrapper.py'' ]] && (echo ''bootstrapper.py
+          file already exists''; cp ''/opt/app-root/bin/utils/bootstrapper.py'' .)
+          || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py''
+          --output bootstrapper.py)"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/requirements-elyra.txt'' ]] && (echo
+          ''requirements-elyra.txt file already exists''; cp ''/opt/app-root/bin/utils/requirements-elyra.txt''
+          .) || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt''
+          --output requirements-elyra.txt)"
+
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt
+          && python3 bootstrapper.py --pipeline-name ''untitled'' --cos-endpoint ''https://minio-api-ml.apps.privateailab.acic.accenture''
+          --cos-bucket ''mlpipeline-artifacts'' --cos-directory ''untitled-1118102039''
+          --cos-dependencies-archive ''model_training-0a3fe236-52da-4f4e-9742-c5f6ff271a21.tar.gz''
+          --file ''pipeline-skeleton/model_training.ipynb'' "
+
+          '
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: 'True'
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:2932e07edbcbc54e68959cc6bc5c16c6b07766453a3ac655bdc33b844108c541
+    exec-run-a-file-4:
+      container:
+        args:
+        - 'sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/bootstrapper.py'' ]] && (echo ''bootstrapper.py
+          file already exists''; cp ''/opt/app-root/bin/utils/bootstrapper.py'' .)
+          || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/elyra/kfp/bootstrapper.py''
+          --output bootstrapper.py)"
+
+          sh -c "[[ -e ''/opt/app-root/bin/utils/requirements-elyra.txt'' ]] && (echo
+          ''requirements-elyra.txt file already exists''; cp ''/opt/app-root/bin/utils/requirements-elyra.txt''
+          .) || (echo ''Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt'';
+          curl --fail -H ''Cache-Control: no-cache'' -L ''https://raw.githubusercontent.com/opendatahub-io/elyra/v4.2.0/etc/generic/requirements-elyra.txt''
+          --output requirements-elyra.txt)"
+
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt
+          && python3 bootstrapper.py --pipeline-name ''untitled'' --cos-endpoint ''https://minio-api-ml.apps.privateailab.acic.accenture''
+          --cos-bucket ''mlpipeline-artifacts'' --cos-directory ''untitled-1118102039''
+          --cos-dependencies-archive ''monitoring-2c469252-37b3-43ea-a77a-e917fa06e493.tar.gz''
+          --file ''pipeline-skeleton/monitoring.ipynb'' "
+
+          '
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: 'True'
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:2932e07edbcbc54e68959cc6bc5c16c6b07766453a3ac655bdc33b844108c541
+pipelineInfo:
+  name: untitled
+root:
+  dag:
+    tasks:
+      run-a-file:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file
+        taskInfo:
+          name: data_processing
+      run-a-file-2:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-2
+        dependentTasks:
+        - run-a-file
+        taskInfo:
+          name: model_development
+      run-a-file-3:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-3
+        dependentTasks:
+        - run-a-file-2
+        taskInfo:
+          name: model_training
+      run-a-file-4:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-4
+        dependentTasks:
+        - run-a-file-3
+        taskInfo:
+          name: monitoring
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.9.0
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-run-a-file:
+          podMetadata:
+            annotations:
+              elyra/node-file-name: pipeline-skeleton/data_processing.ipynb
+              elyra/pipeline-source: untitled.pipeline
+            labels:
+              elyra/experiment-name: ''
+              elyra/node-name: data_processing
+              elyra/node-type: notebook-script
+              elyra/pipeline-name: untitled
+              elyra/pipeline-version: ''
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: minio-secret
+        exec-run-a-file-2:
+          podMetadata:
+            annotations:
+              elyra/node-file-name: pipeline-skeleton/model_development.ipynb
+              elyra/pipeline-source: untitled.pipeline
+            labels:
+              elyra/experiment-name: ''
+              elyra/node-name: model_development
+              elyra/node-type: notebook-script
+              elyra/pipeline-name: untitled
+              elyra/pipeline-version: ''
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: minio-secret
+        exec-run-a-file-3:
+          podMetadata:
+            annotations:
+              elyra/node-file-name: pipeline-skeleton/model_training.ipynb
+              elyra/pipeline-source: untitled.pipeline
+            labels:
+              elyra/experiment-name: ''
+              elyra/node-name: model_training
+              elyra/node-type: notebook-script
+              elyra/pipeline-name: untitled
+              elyra/pipeline-version: ''
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: minio-secret
+        exec-run-a-file-4:
+          podMetadata:
+            annotations:
+              elyra/node-file-name: pipeline-skeleton/monitoring.ipynb
+              elyra/pipeline-source: untitled.pipeline
+            labels:
+              elyra/experiment-name: ''
+              elyra/node-name: monitoring
+              elyra/node-type: notebook-script
+              elyra/pipeline-name: untitled
+              elyra/pipeline-version: ''
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: minio-secret
