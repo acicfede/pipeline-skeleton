@@ -1,0 +1,132 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: guidellm-benchmark-granite-minio
+  namespace: ml
+  labels:
+    app: guidellm-benchmark-granite-minio
+spec:
+  backoffLimit: 0
+  completionMode: NonIndexed
+
+  template:
+    metadata:
+      labels:
+        app: guidellm-benchmark-granite-minio
+    spec:
+      enableServiceLinks: false
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+
+      volumes:
+        - name: results
+          emptyDir: {}
+        - name: hf-cache
+          emptyDir: {}
+        - name: mc-config
+          emptyDir: {}
+
+      containers:
+        # -------------------------------------------------
+        # 1️⃣ GUIDELLM – benchmark
+        # -------------------------------------------------
+        - name: guidellm
+          image: quay.io/rh-aiservices-bu/guidellm:f1f8ca8
+          imagePullPolicy: IfNotPresent
+
+          env:
+            # 🔧 OpenShift fix (HF cache scrivibile)
+            - name: HF_HOME
+              value: /tmp/huggingface
+
+            # 🔹 ENDPOINT PARAMETRICO
+            # es: http://granite-31-2b-instruct-predictor.ml.svc.cluster.local:8080
+            - name: GUIDELLM_TARGET
+              value: "http://granite-31-2b-instruct-predictor.ml.svc.cluster.local:8080"
+
+            # 🔹 MODEL CONFIG
+            - name: GUIDELLM_MODEL
+              value: "granite-31-2b-instruct"
+            - name: GUIDELLM_PROCESSOR
+              value: "ibm-granite/granite-3.1-2b-instruct"
+
+            # 🔹 BENCHMARK CONFIG
+            - name: GUIDELLM_RATE_TYPE
+              value: "sweep"
+            - name: GUIDELLM_DATA
+              value: "prompt_tokens=256,output_tokens=128"
+            - name: GUIDELLM_MAX_REQUESTS
+              value: "100"
+            - name: GUIDELLM_OUTPUT_PATH
+              value: "/results/results.json"
+
+          resources:
+            requests:
+              memory: 4Gi
+            limits:
+              memory: 4Gi
+
+          volumeMounts:
+            - name: results
+              mountPath: /results
+            - name: hf-cache
+              mountPath: /tmp/huggingface
+
+        # -------------------------------------------------
+        # 2️⃣ MINIO UPLOADER
+        # -------------------------------------------------
+        - name: minio-uploader
+          image: quay.io/minio/mc:latest
+          imagePullPolicy: IfNotPresent
+
+          env:
+            # 🔧 OpenShift fix (mc config)
+            - name: MC_CONFIG_DIR
+              value: /tmp/mc
+
+            # 🔹 MINIO ENDPOINT PARAMETRICO
+            # es: http://minio-service.guidellm.svc.cluster.local:9000
+            - name: MINIO_ENDPOINT
+              value: "http://minio-service.ml.svc.cluster.local:9000"
+
+            # 🔹 BUCKET / PATH PARAMETRICI
+            - name: MINIO_BUCKET
+              value: "guidellm-results"
+            - name: MINIO_PREFIX
+              value: "granite"
+
+            # 🔐 Credenziali MinIO
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: minio_root_user
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: minio_root_password
+
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              echo "Waiting for results.json..."
+              while [ ! -f /results/results.json ]; do sleep 2; done
+
+              mc alias set minio \
+                "$MINIO_ENDPOINT" \
+                "$MINIO_ACCESS_KEY" \
+                "$MINIO_SECRET_KEY"
+
+              mc cp /results/results.json \
+                minio/$MINIO_BUCKET/$MINIO_PREFIX/results-$(date +%Y%m%d-%H%M%S).json
+
+              echo "Upload completed"
+
+          volumeMounts:
+            - name: results
+              mountPath: /results
+            - name: mc-config
+              mountPath: /tmp/mc
