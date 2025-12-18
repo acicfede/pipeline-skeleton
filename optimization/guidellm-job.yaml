@@ -43,11 +43,11 @@ spec:
             # 🔹 ENDPOINT PARAMETRICO
             # es: http://granite-31-2b-instruct-predictor.ml.svc.cluster.local:8080
             - name: GUIDELLM_TARGET
-              value: "http://granite-31-2b-instruct-predictor.ml.svc.cluster.local:8080"
+              value: "http://granite-3-1-2b-instruct-predictor.ml.svc.cluster.local:8080"
 
             # 🔹 MODEL CONFIG
             - name: GUIDELLM_MODEL
-              value: "granite-31-2b-instruct"
+              value: "granite-3-1-2b-instruct"
             - name: GUIDELLM_PROCESSOR
               value: "ibm-granite/granite-3.1-2b-instruct"
 
