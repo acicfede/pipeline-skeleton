@@ -18,13 +18,13 @@ spec:
   model: local-completions
  
   modelArgs:
-    # 🔴 DEVE combaciare con --served-model-name di vLLM
+    # DEVE combaciare con --served-model-name di vLLM
     - name: model
-      value: granite-31-2b-instruct
+      value: granite-3-1-2b-instruct
  
-    # 🔴 Endpoint COMPLETIONS interno (no Route HTTPS)
+    # Endpoint COMPLETIONS interno (no Route HTTPS)
     - name: base_url
-      value: http://granite-31-2b-instruct-predictor.ml.svc.cluster.local:8080/v1/completions
+      value: http://granite-3-1-2b-instruct-predictor.ml.svc.cluster.local:8080/v1/completions
  
     # Concurrency / retry
     - name: num_concurrent
